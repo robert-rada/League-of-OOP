@@ -1,69 +1,87 @@
 package game.spell;
 
-import game.hero.*;
+import game.hero.Hero;
+import game.hero.Wizard;
+import game.hero.Rogue;
+import game.hero.Knight;
+import game.hero.Pyromancer;
 
-public class Spell
-{
+public class Spell {
     private static final int BASE_DAMAGE = 0;
     private static final int DAMAGE_PER_LEVEL = 0;
 
     protected int level;
 
-    public Spell()
-    {
+    public Spell() {
         this.level = 0;
     }
 
-    public float getDamage()
-    {
+    /**
+     * @return
+     */
+    public float getDamage() {
         return getBaseDamage() + this.level * getDamagePerLevel();
     }
 
-    public void levelUp()
-    {
+    /**
+     * @return
+     */
+    public void levelUp() {
         this.level++;
     }
 
-    public void preFightEffects(Hero enemy)
-    {
+    public void preFightEffects(final Hero enemy) {
     }
 
-    public void postFightEffects(Hero enemy, float damage_received)
-    {
+    public void postFightEffects(final Hero enemy, final float damageReceived) {
     }
 
-    public float getModifier(Hero hero)
-    {
+    /**
+     * @return
+     */
+    public float getModifier(final Hero hero) {
         return 1f;
     }
 
-    public float getModifier(Rogue enemy)
-    {
+    /**
+     * @return
+     */
+    public float getModifier(final Rogue enemy) {
         return 1f;
     }
 
-    public float getModifier(Knight enemy)
-    {
+    /**
+     * @return
+     */
+    public float getModifier(final Knight enemy) {
         return 1f;
     }
 
-    public float getModifier(Pyromancer enemy)
-    {
+    /**
+     * @return
+     */
+    public float getModifier(final Pyromancer enemy) {
         return 1f;
     }
 
-    public float getModifier(Wizard enemy)
-    {
+    /**
+     * @return
+     */
+    public float getModifier(final Wizard enemy) {
         return 1f;
     }
 
-    protected int getBaseDamage()
-    {
+    /**
+     * @return
+     */
+    protected int getBaseDamage() {
         return BASE_DAMAGE;
     }
 
-    protected int getDamagePerLevel()
-    {
+    /**
+     * @return
+     */
+    protected int getDamagePerLevel() {
         return DAMAGE_PER_LEVEL;
     }
 }

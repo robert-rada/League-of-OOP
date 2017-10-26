@@ -7,24 +7,25 @@ import game.spell.Debuff;
 
 import static java.lang.Integer.max;
 
-public class Hero
-{
-    protected int x, y;
+public class Hero {
+    private int x, y;
     protected int level;
-    protected int hp;
-    protected int xp;
-    protected HeroType type;
+    private int hp;
+    private int xp;
     protected Game game;
-    protected Tile tile;
+    private Tile tile;
     protected Spell[] spells;
+    private Debuff debuff;
 
-    protected Debuff debuff;
+    private static final int BASE_XP_GAIN = 200;
+    private static final int XP_GAIN_PER_LEVEL = 40;
 
-    public Hero(int x, int y, HeroType type, Game game)
-    {
+    private static final int BASE_XP = 250;
+    private static final int XP_PER_LEVEL = 50;
+
+    public Hero(final int x, final int y, final Game game) {
         this.x = x;
         this.y = y;
-        this.type = type;
 
         this.level = 0;
         this.xp = 0;
@@ -33,46 +34,50 @@ public class Hero
         this.game = game;
     }
 
-    public int getTotalDamage(Hero target)
-    {
-        //float damage = 0f;
+    /**
+     * *
+     *
+     * @param target
+     * @return
+     */
+    public int getTotalDamage(final Hero target) {
         int damage = 0;
 
-        for (Spell spell : spells)
-        {
-            //damage += spell.getDamage() * target.requestSpellModifier(spell);
+        for (Spell spell : spells) {
             damage += Math.round(spell.getDamage()
                     * target.requestSpellModifier(spell)
                     * getLandModifier());
         }
 
-        //damage *= getLandModifier();
-
-        //return Math.round(damage);
         return damage;
     }
 
-    public int getRawDamage()
-    {
+    /**
+     *
+     * @return
+     */
+    public int getRawDamage() {
         int damage = 0;
 
-        for (Spell spell : spells)
-        {
+        for (Spell spell : spells) {
             damage += Math.round(spell.getDamage() * getLandModifier());
         }
 
-        //return Math.round(damage);
         return damage;
     }
 
-    public void move(int dx, int dy)
-    {
-        if (!debuff.isDone())
-        {
+    /**
+     *
+     * @param dx
+     * @param dy
+     */
+    public void move(final int dx, final int dy) {
+        if (!debuff.isDone()) {
             debuff.update();
 
-            if (this.isDead() || debuff.getStun())
+            if (this.isDead() || debuff.getStun()) {
                 return;
+            }
         }
 
         x += dx;
@@ -81,17 +86,19 @@ public class Hero
         this.tile = game.getTile(this.x, this.y);
     }
 
-    public void gainXp(int loser_level)
-    {
-        if (isDead())
+    /**
+     *
+     * @param loserLevel
+     */
+    public void gainXp(final int loserLevel) {
+        if (isDead()) {
             return;
+        }
 
-        xp += max(0, 200 - (this.level - loser_level) * 40);
+        xp += max(0, BASE_XP_GAIN - (this.level - loserLevel) * XP_GAIN_PER_LEVEL);
 
-        while (xp >= getXpMax())
-        {
-            for (Spell spell : spells)
-            {
+        while (xp >= getXpMax()) {
+            for (Spell spell : spells) {
                 spell.levelUp();
             }
 
@@ -100,28 +107,33 @@ public class Hero
         }
     }
 
-    public void receiveDamage(int damage)
-    {
+    /**
+     *
+     * @param damage
+     */
+    public void receiveDamage(final int damage) {
         this.hp -= damage;
     }
 
-    public String toString()
-    {
+    /**
+     *
+     * @return
+     */
+    public String toString() {
+        return null;
+    }
+
+    /**
+     *
+     * @param classChar
+     * @return
+     */
+    public String toString(final char classChar) {
         StringBuilder ret = new StringBuilder();
 
-        switch(this.type)
-        {
-            case ROGUE:         ret.append("R ");
-                break;
-            case KNIGHT:        ret.append("K ");
-                break;
-            case PYROMANCER:    ret.append("P ");
-                break;
-            case WIZARD:        ret.append("W ");
-        }
+        ret.append(classChar);
 
-        if (this.isDead())
-        {
+        if (this.isDead()) {
             ret.append("dead");
             return ret.toString();
         }
@@ -139,93 +151,111 @@ public class Hero
         return ret.toString();
     }
 
-    protected float getHeroModifier(Hero target, float mod_rogue, float mod_knight,
-                                    float mod_pyro, float mod_wizard)
-    {
-        switch(target.getType())
-        {
-            case ROGUE: return mod_rogue;
-            case KNIGHT: return mod_knight;
-            case WIZARD: return mod_wizard;
-            case PYROMANCER: return mod_pyro;
-        }
-
-        return 1f;
-    }
-
-    public void getDebuff(int damage, boolean stun, int duration)
-    {
+    /**
+     *
+     * @param damage
+     * @param stun
+     * @param duration
+     */
+    public void getDebuff(final int damage, final boolean stun, final int duration) {
         this.debuff = new Debuff(this, damage, stun, duration);
     }
 
-    public void preFightEffects(Hero target)
-    {
-        for (Spell spell : spells)
-        {
+    /**
+     *
+     * @param target
+     */
+    public void preFightEffects(final Hero target) {
+        for (Spell spell : spells) {
             spell.preFightEffects(target);
         }
     }
 
-    public void postFightEffects(Hero target, float damage_received)
-    {
-        for (Spell spell : spells)
-        {
-            spell.postFightEffects(target, damage_received);
+    /**
+     *
+     * @param target
+     * @param damageReceived
+     */
+    public void postFightEffects(final Hero target, final float damageReceived) {
+        for (Spell spell : spells) {
+            spell.postFightEffects(target, damageReceived);
         }
     }
 
-    public float requestSpellModifier(Spell spell)
-    {
+    /**
+     *
+     * @param spell
+     * @return
+     */
+    public float requestSpellModifier(final Spell spell) {
         return 1f;
     }
 
-    public float getLandModifier()
-    {
+    /**
+     *
+     * @return
+     */
+    public float getLandModifier() {
         return 1f;
     }
 
-    public boolean isDead()
-    {
+    /**
+     *
+     * @return
+     */
+    public boolean isDead() {
         return hp <= 0;
     }
 
-    private int getXpMax()
-    {
-        return 250 + level * 50;
+    private int getXpMax() {
+        return BASE_XP + level * XP_PER_LEVEL;
     }
 
-    public int getMaxHp()
-    {
+    /**
+     *
+     * @return
+     */
+    public int getMaxHp() {
         return 0;
     }
 
-    public int getHp()
-    {
+    /**
+     *
+     * @return
+     */
+    public int getHp() {
         return this.hp;
     }
 
-    public HeroType getType()
-    {
-        return this.type;
-    }
-
-    public int getX()
-    {
+    /**
+     *
+     * @return
+     */
+    public int getX() {
         return this.x;
     }
 
-    public int getY()
-    {
+    /**
+     *
+     * @return
+     */
+    public int getY() {
         return this.y;
     }
 
-    public int getLevel()
-    {
+    /**
+     *
+     * @return
+     */
+    public int getLevel() {
         return this.level;
     }
 
-    public Tile getTile()
-    {
+    /**
+     *
+     * @return
+     */
+    public Tile getTile() {
         return this.tile;
     }
 }

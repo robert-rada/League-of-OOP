@@ -1,6 +1,5 @@
 package game;
 
-public enum Tile
-{
+public enum Tile {
     LAND, VOLCANIC, DESERT, WOODS
 }

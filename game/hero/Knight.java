@@ -6,14 +6,14 @@ import game.spell.Spell;
 import game.spell.knight.Execute;
 import game.spell.knight.Slam;
 
-public class Knight extends Hero
-{
+public final class Knight extends Hero {
     private static final int BASE_HP = 900;
     private static final int HP_PER_LV = 80;
 
-    public Knight(int x, int y, Game game)
-    {
-        super(x, y, HeroType.KNIGHT, game);
+    private static final float LAND_MODIFIER = 1.15f;
+
+    public Knight(final int x, final int y, final Game game) {
+        super(x, y, game);
 
         spells = new Spell[2];
         spells[0] = new Execute();
@@ -21,20 +21,24 @@ public class Knight extends Hero
     }
 
     @Override
-    public int getMaxHp()
-    {
+    public int getMaxHp() {
         return BASE_HP + HP_PER_LV * this.level;
     }
 
-    public float getLandModifier()
-    {
-        if (this.tile == Tile.LAND)
-            return 1.15f;
+    public float getLandModifier() {
+        if (this.getTile() == Tile.LAND) {
+            return LAND_MODIFIER;
+        }
+
         return 1f;
     }
 
-    public float requestSpellModifier(Spell spell)
-    {
+    public float requestSpellModifier(final Spell spell) {
         return spell.getModifier(this);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString('K');
     }
 }
